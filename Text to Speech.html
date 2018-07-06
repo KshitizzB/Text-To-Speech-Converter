@@ -1,0 +1,143 @@
+<!-- SOURCE CODE -->
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Text to speech converter in JS</title>
+		<style type="text/css">
+			body{
+				background: linear-gradient(black,white);
+			}
+			@viewport
+			{
+				zoom: 1.0;
+				width: extend-to-zoom;
+			}
+			.container{
+				background: #f6f6f6;
+				position: absolute;
+				top:50%;
+				left:50%;
+				transform: translateX(-50%) translateY(-50%);
+				width: 1000px;
+				padding:20px;
+				border-radius: 10px;
+				box-shadow: 0 0 50px 0 #ccc;
+			}
+			.container textarea{
+				margin-left: 20px;
+				width: 950px;
+				height: 200px;
+				resize: none;
+				outline: none;
+				border: 1px solid #ccc;
+				border-radius: 10px;
+				padding: 20px;
+				font-size: 17px;
+			}
+			.container label{
+				display: block;
+				width: 1000px;
+			}
+			.container label span{
+				background: lightgrey;
+				font-size: 20px;
+				width: 60px;
+				padding: 5px;
+				margin-top: 25px;
+				margin-left: 20px;
+				display: inline-block;
+				border-radius: 5px;
+			}
+			.container label select, .container label input{
+				width: 800px;
+				margin-left: 50px;
+			}
+			.button{
+				display: inline-block;
+				background: lightgrey;
+				padding: 10px 20px;
+				color: black;
+				border: 1px solid #ccc;
+				margin-left: 20px;
+				font-size: 25px;
+				cursor: pointer;
+				margin-top: 30px;
+				box-shadow: 2px 2px 2px 2px grey;
+				border-radius: 8px;
+			}
+			.button:hover{
+				background: black;
+				color: white;
+			}
+			h1{
+				font-family: Franklin Gothic;
+				margin-left: 20px;	
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>Text to Speech Converter</h1>
+			<textarea id="myText">Hello, I am Kshitiz. Welcome to Text to Speech software! Write your own words and give it a try!!</textarea>
+			<label>
+				<span>Voice</span>
+				<select id="voiceOptions"></select>
+			</label>
+			<label>
+				<span>Volume</span>
+				<input type="range" id="volumeSlider" min="0" max="1" value="0.5" step="0.1" />
+			</label>
+			<label>
+				<span>Rate</span>
+				<input type="range" id="rateSlider" min="0" max="2" value="0.8" step="0.1"/>
+			</label>
+			<div class="button" onclick="speak();">Speak</div>
+		</div>
+		<script type="text/javascript">
+
+			function checkCompatibilty () {
+				if(!('speechSynthesis' in window)){
+					alert('Your browser is not supported. If google chrome, please upgrade!!');
+				}
+			};
+
+			checkCompatibilty();
+
+			var voiceOptions = document.getElementById('voiceOptions');
+			var volumeSlider = document.getElementById('volumeSlider');
+			var rateSlider = document.getElementById('rateSlider');
+			var myText = document.getElementById('myText');
+
+			var voiceMap = [];
+
+			function loadVoices () {
+				var voices = speechSynthesis.getVoices();
+				for (var i = 0; i < voices.length; i++) {
+					var voice = voices[i];
+					var option = document.createElement('option');
+					option.value = voice.name;
+					option.innerHTML = voice.name;
+					voiceOptions.appendChild(option);
+					voiceMap[voice.name] = voice;
+				};
+			};
+
+			window.speechSynthesis.onvoiceschanged = function(e){
+				loadVoices();
+			};
+
+			function speak () {
+				var msg = new SpeechSynthesisUtterance();
+				msg.volume = volumeSlider.value;
+				msg.voice = voiceMap[voiceOptions.value];
+				msg.rate = rateSlider.value;
+				msg.text = myText.value;
+				window.speechSynthesis.speak(msg);
+			};
+		</script>
+		
+	</body>
+</html>
